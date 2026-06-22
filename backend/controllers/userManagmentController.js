@@ -1,12 +1,53 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import Log from "../models/log.js";
+
+const passwordRegex =
+
+/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
 // CREATE USER (Admin)
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const {
 
-    const existing = await User.findOne({ email });
+    name,
+
+    email,
+
+    password
+
+    } = req.body;
+
+    const cleanName =
+
+    name.trim();
+
+    const cleanEmail =
+
+    email.trim().toLowerCase();
+
+    if(
+
+    !passwordRegex.test(
+
+    password
+
+    )
+
+    ){
+
+    return res.status(400).json({
+
+    message:
+
+    "Weak password"
+
+    });
+
+    } 
+
+    const existing = await User.findOne({ email: cleanEmail });
     if (existing) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -14,8 +55,8 @@ export const createUser = async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      name,
-      email,
+      name: cleanName,
+      email: cleanEmail,
       password: hashed,
       organizationId: req.user.organizationId
     });

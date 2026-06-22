@@ -3,17 +3,65 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Organization from "../models/organization.js";
 
-
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 export const signup = async (req, res) => {
   try {
     const {
-      name,
-      email,
-      password,
-      organizationName = `${name}'s Organization`
+
+    name,
+
+    email,
+
+    password,
+
+    organizationName
+
     } = req.body;
 
-    const existingUser = await User.findOne({ email });
+    const cleanName = name?.trim();
+
+    const cleanEmail = email?.trim().toLowerCase();
+
+    const cleanOrg =
+
+    organizationName?.trim()
+
+    ||
+
+    `${cleanName}'s Organization`;
+
+    // Validate password
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character" });
+    }
+
+    const existingUser =
+
+    await User.findOne({
+
+    email: cleanEmail
+
+    });
+
+    const existingOrg =
+
+    await Organization.findOne({
+
+    name: cleanOrg
+
+    });
+
+    if(existingOrg){
+
+    return res.status(400).json({
+
+    message:
+
+    "Organization already exists"
+
+    });
+
+    }
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -21,13 +69,18 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      name,
-      email,
-      password: hashedPassword
+
+    name: cleanName,
+
+    email: cleanEmail,
+
+    password: hashedPassword,
+    authProvider: "local",
+
     });
     // Step 2: Create organization
     const organization = await Organization.create({
-      name: organizationName,
+      name: cleanOrg,
       createdBy: user._id
     });
 
@@ -52,12 +105,36 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const {
+
+    email,
+
+    password
+
+    } = req.body;
+
+    const cleanEmail =
+
+    email.trim().toLowerCase();
 
     // find user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({
+
+    email: cleanEmail
+
+    });
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    if (user.authProvider === "google") {
+
+    return res.status(400).json({
+
+      message: "Use Google Sign In"
+
+    });
+
     }
 
     // check password

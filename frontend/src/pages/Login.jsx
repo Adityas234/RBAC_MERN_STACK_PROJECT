@@ -62,7 +62,7 @@ export default function Login() {
 
       );
 
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
 
     }
 
@@ -118,7 +118,7 @@ export default function Login() {
 
       );
 
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
 
     }
 

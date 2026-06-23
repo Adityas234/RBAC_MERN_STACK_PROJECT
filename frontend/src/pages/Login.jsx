@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Mail, Lock, Shield, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { GoogleLogin } from "@react-oauth/google";
-
+import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import ParticlesBg from "../components/three/ParticlesBg";
 import Button from "../components/ui/Button";
@@ -17,6 +17,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   const [errorMsg, setErrorMsg] = useState("");
+
+  const navigate = useNavigate();
 
   // ---------------- LOCAL LOGIN ----------------
 

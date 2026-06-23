@@ -5,7 +5,7 @@ import {
   deleteRole,
   getRoles
 } from "../controllers/roleController.js";
-import { authenticate } from "../middleware/authmiddleware.js";
+import { authenticate } from "../middleware/authMiddleware.js";
 import { authorize } from "../middleware/authorize.js";
 
 const router = express.Router();

@@ -11,7 +11,7 @@ import userManagementRoutes from "./routes/userManagementRoutes.js";
 import logRoutes from "./routes/logRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 
-import { authenticate } from "./middleware/authMiddleware.js";
+import { authenticate } from "./middleware/authmiddleware.js";
 import { authLimiter } from "./middleware/rateLimiter.js";
 
 import Permission from "./models/Permission.js";
